@@ -79,7 +79,7 @@ const Modal = React.memo(({ showModal, setShowModal, children }) => {
             onClick={() => setShowModal(false)} // Close when clicking on the backdrop
           >
             <motion.div
-              className="bg-neutral-800 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative focus:outline-none"
+              className="bg-neutral-800 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative focus:outline-none overflow-y-auto max-h-full"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
@@ -164,45 +164,60 @@ const NavLinks = React.memo(({ openModal, isSidebar = false, closeSidebar }) => 
  */
 const Sidebar = React.memo(({ isOpen, closeSidebar, openModal }) => {
   const sidebarVariants = {
-    hidden: { x: '-100%' },
-    visible: { x: '0%' },
-    exit: { x: '-100%' },
+    hidden: { x: '100%' }, // Start off-screen to the right
+    visible: { x: '0%' },  // Slide into view
+    exit: { x: '100%' },   // Slide out to the right
   };
+
+  const sidebarRef = useRef(null);
+
+  // Focus the first link when sidebar opens
+  useEffect(() => {
+    if (isOpen && sidebarRef.current) {
+      const firstFocusableElement = sidebarRef.current.querySelector('a, button');
+      if (firstFocusableElement) {
+        firstFocusableElement.focus();
+      }
+    }
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
           {/* Sidebar */}
-          <motion.aside
-            className="fixed top-0 left-0 w-3/4 max-w-xs h-full bg-neutral-800 shadow-lg z-50 flex flex-col p-6"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={sidebarVariants}
-            transition={{ type: 'tween', duration: 0.3 }}
-            aria-label="Mobile Navigation Sidebar"
-          >
-            <div className="flex items-center justify-between mb-8">
-              {/* Logo */}
-              <div className="flex items-center">
-                <FaRunning className="text-primary text-2xl" aria-hidden="true" />
-                <span className="ml-2 font-bold text-xl text-gray-300">Boxing Gym</span>
+          <FocusTrap>
+            <motion.aside
+              className="fixed top-0 right-0 w-4/5 max-w-xs h-full bg-neutral-800 shadow-lg z-50 flex flex-col p-6"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={sidebarVariants}
+              transition={{ type: 'tween', duration: 0.3 }}
+              aria-label="Mobile Navigation Sidebar"
+              ref={sidebarRef}
+            >
+              <div className="flex items-center justify-between mb-8">
+                {/* Logo */}
+                <div className="flex items-center">
+                  <FaRunning className="text-primary text-2xl" aria-hidden="true" />
+                  <span className="ml-2 font-bold text-xl text-gray-300">Boxing Gym</span>
+                </div>
+                {/* Close Button */}
+                <button
+                  onClick={closeSidebar}
+                  className="text-gray-300 hover:text-primary focus:outline-none"
+                  aria-label="Close Sidebar"
+                >
+                  <FaTimes size={20} aria-hidden="true" />
+                </button>
               </div>
-              {/* Close Button */}
-              <button
-                onClick={closeSidebar}
-                className="text-gray-300 hover:text-primary focus:outline-none"
-                aria-label="Close Sidebar"
-              >
-                <FaTimes size={20} aria-hidden="true" />
-              </button>
-            </div>
-            {/* Navigation Links */}
-            <nav className="flex flex-col space-y-4">
-              <NavLinks openModal={openModal} isSidebar={true} closeSidebar={closeSidebar} />
-            </nav>
-          </motion.aside>
+              {/* Navigation Links */}
+              <nav className="flex flex-col space-y-4">
+                <NavLinks openModal={openModal} isSidebar={true} closeSidebar={closeSidebar} />
+              </nav>
+            </motion.aside>
+          </FocusTrap>
           {/* Backdrop */}
           <motion.div
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -221,7 +236,7 @@ const Sidebar = React.memo(({ isOpen, closeSidebar, openModal }) => {
 /**
  * Header Component with Enhanced Navigation Links
  */
-const Header = React.memo(({ openModal, toggleSidebar }) => {
+const Header = React.memo(({ openModal, toggleSidebar, isSidebarOpen }) => {
   return (
     <header className="fixed w-full z-50 bg-neutral-800 shadow-md">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -235,14 +250,16 @@ const Header = React.memo(({ openModal, toggleSidebar }) => {
           <nav className="hidden md:flex space-x-8 items-center" aria-label="Primary Navigation">
             <NavLinks openModal={openModal} />
           </nav>
-          {/* Mobile Hamburger Menu */}
+          {/* Mobile Hamburger/Close Menu */}
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleSidebar}
-              className="text-gray-300 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary p-2 rounded-md"
-              aria-label="Open Sidebar"
+              className="text-gray-300 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary p-2 rounded-md transition-colors duration-200"
+              aria-label={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
+              aria-expanded={isSidebarOpen}
+              aria-controls="mobile-menu"
             >
-              <FaBars size={24} aria-hidden="true" />
+              {isSidebarOpen ? <FaTimes size={24} aria-hidden="true" /> : <FaBars size={24} aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -289,7 +306,7 @@ const AnimatedSection = ({ children, delay = 0 }) => {
 const HeroSection = React.memo(({ openModal }) => (
   <section
     id="home"
-    className="relative h-screen flex items-center justify-center"
+    className="relative h-screen flex items-center justify-center overflow-hidden"
     aria-labelledby="hero-heading"
   >
     {/* Background Video */}
@@ -449,6 +466,21 @@ const AboutSection = React.memo(() => (
               pagination={{ clickable: true }}
               className="w-full"
               aria-label="Testimonials Carousel"
+              // Responsive configuration to ensure proper display on mobile devices
+              breakpoints={{
+                0: {
+                  slidesPerView: 1,
+                },
+                640: {
+                  slidesPerView: 1,
+                },
+                768: {
+                  slidesPerView: 1,
+                },
+                1024: {
+                  slidesPerView: 1,
+                },
+              }}
             >
               <SwiperSlide>
                 <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
@@ -479,88 +511,15 @@ const AboutSection = React.memo(() => (
         </div>
       </AnimatedSection>
     </section>
-  ));
-
-const TestimonialsSection = React.memo(() => {
-  const testimonials = [
-    {
-      id: 1,
-      name: 'Sarah L.',
-      feedback:
-        '"Boxing Gym transformed my life! The trainers are amazing and the community is incredibly supportive."',
-      image: '/testimonials/sarah.jpg', // Ensure this image is in your public directory
-    },
-    {
-      id: 2,
-      name: 'Mike D.',
-      feedback:
-        '"I\'ve never felt stronger or more confident. The programs are well-structured and effective."',
-      image: '/testimonials/mike.jpg',
-    },
-    {
-      id: 3,
-      name: 'Jessica K.',
-      feedback:
-        '"A fantastic place to train! The facilities are top-notch and the staff truly cares about your progress."',
-      image: '/testimonials/jessica.jpg',
-    },
-    // Add more testimonials as needed
-  ];
-
-  return (
-    <section
-      id="testimonials"
-      className="py-20 bg-neutral-800"
-      role="region"
-      aria-labelledby="testimonials-heading"
-    >
-      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
-        
-        <AnimatedSection>
-          <div className="text-center mb-12">
-            <h2 id="testimonials-heading" className="text-3xl font-bold text-gray-300">
-              What Our Members Say
-            </h2>
-          </div>
-        </AnimatedSection>
-        {/* Testimonials Carousel */}
-        <Swiper
-          spaceBetween={30}
-          centeredSlides
-          autoplay={{
-            delay: 7000,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          className="w-full"
-          aria-label="Member Testimonials"
-        >
-          {testimonials.map((testimonial) => (
-            <SwiperSlide key={testimonial.id}>
-              <div className="flex flex-col items-center text-center px-6">
-                <img
-                  src={testimonial.image}
-                  alt={`${testimonial.name}'s Photo`}
-                  className="w-24 h-24 rounded-full mb-4 object-cover"
-                  loading="lazy"
-                />
-                <p className="text-lg text-gray-300 mb-2">"{testimonial.feedback}"</p>
-                <h4 className="text-primary font-semibold">- {testimonial.name}</h4>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-    </section>
-  );
-});
+  )
+)
 
 /**
  * Enhanced Program Card Component
  */
 const EnhancedProgramCard = React.memo(({ program, openProgramModal }) => (
   <motion.div
-    className="bg-neutral-700 rounded-lg shadow-lg p-6 text-center cursor-pointer"
+    className="bg-neutral-700 rounded-lg shadow-lg p-6 text-center cursor-pointer transform transition-transform duration-300 hover:scale-105"
     whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0,0,0,0.2)' }}
     transition={{ duration: 0.3 }}
     onClick={() => openProgramModal(program)}
@@ -688,7 +647,12 @@ const ProgramsSection = React.memo(() => {
 
         {/* Categories Filter */}
         <AnimatedSection delay={0.2}>
-          <div className="flex justify-center mb-8 space-x-4" role="tablist" aria-label="Program Categories">
+          {/* Modified flex container to prevent wrapping and adjust spacing */}
+          <div
+            className="flex justify-center mb-8 space-x-4 flex-wrap md:flex-nowrap"
+            role="tablist"
+            aria-label="Program Categories"
+          >
             {categories.map((category) => (
               <button
                 key={category}
@@ -697,7 +661,7 @@ const ProgramsSection = React.memo(() => {
                   selectedCategory === category
                     ? 'bg-primary text-white'
                     : 'bg-transparent border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-200'
-                } focus:outline-none focus:ring-2 focus:ring-primary`}
+                } focus:outline-none focus:ring-2 focus:ring-primary m-1 flex-1 min-w-[100px] md:min-w-0`}
                 aria-pressed={selectedCategory === category}
                 role="tab"
               >
@@ -1091,9 +1055,9 @@ const BoxingLandingPage = () => {
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
-      <div className="font-sans text-gray-300 bg-neutral-900">
+      <div className="font-sans text-gray-300 bg-neutral-900 overflow-x-hidden">
         {/* Header */}
-        <Header openModal={openModal} toggleSidebar={toggleSidebar} />
+        <Header openModal={openModal} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
 
         {/* Sidebar */}
         <Sidebar isOpen={isSidebarOpen} closeSidebar={closeSidebar} openModal={openModal} />
@@ -1105,9 +1069,6 @@ const BoxingLandingPage = () => {
 
           {/* About Section */}
           <AboutSection />
-
-          {/* Testimonials Section (Optional) */}
-          {/* <TestimonialsSection /> */}
 
           {/* Programs/Classes Section */}
           <ProgramsSection />

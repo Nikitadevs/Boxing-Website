@@ -1,6 +1,6 @@
-// MembershipForm.jsx
+// src/components/MembershipForm.jsx
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   FaRunning,
   FaCheckCircle,
@@ -11,10 +11,6 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaCheck,
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedinIn,
   FaTimes,
 } from 'react-icons/fa';
 import { Formik, Form, Field, ErrorMessage, useField } from 'formik';
@@ -66,11 +62,11 @@ const CustomInput = React.forwardRef(({ value, onClick, onChange, placeholder },
       value={value}
       placeholder={placeholder}
       ref={ref}
-      className="border rounded p-2 pl-8 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full bg-white placeholder-gray-400 text-sm"
+      className="border border-gray-600 rounded-md p-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 placeholder-gray-500 w-full"
       readOnly
       aria-label="Date of Birth"
     />
-    <FaCalendarAlt className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+    <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
   </div>
 ));
 CustomInput.displayName = 'CustomInput';
@@ -82,8 +78,8 @@ const CustomDatePicker = ({ label, ...props }) => {
 
   return (
     <div className="flex flex-col">
-      <label htmlFor={props.name} className="text-sm font-medium mb-1 text-gray-700 flex items-center">
-        <FaCalendarAlt className="mr-2 text-gray-500" />
+      <label htmlFor={props.name} className="text-sm font-medium mb-1 text-gray-300 flex items-center">
+        <FaCalendarAlt className="mr-2 text-gray-400" />
         {label}
       </label>
       <div className="relative">
@@ -108,7 +104,7 @@ const CustomDatePicker = ({ label, ...props }) => {
           <button
             type="button"
             onClick={() => setValue(null)}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-red-500 focus:outline-none"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 focus:outline-none"
             aria-label="Clear date"
           >
             <FaTimes />
@@ -132,11 +128,11 @@ const ProgressIndicator = ({ steps, currentStep }) => (
         <div className="flex flex-col items-center">
           <div
             className={classNames(
-              'flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full border-2 transition-colors duration-300 relative',
+              'flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full border-2 transition-colors duration-300 relative',
               {
                 'bg-green-500 border-green-500 text-white': currentStep > index + 1,
                 'bg-indigo-600 border-indigo-600 text-white': currentStep === index + 1,
-                'bg-white border-gray-300 text-gray-500': currentStep < index + 1,
+                'bg-transparent border-gray-300 text-gray-500': currentStep < index + 1,
               }
             )}
             aria-current={currentStep === index + 1 ? 'step' : undefined}
@@ -145,7 +141,7 @@ const ProgressIndicator = ({ steps, currentStep }) => (
           >
             {currentStep > index + 1 ? <FaCheck /> : index + 1}
           </div>
-          <span className="mt-1 text-xs md:text-sm text-center font-medium text-gray-700">
+          <span className="mt-1 text-xs md:text-sm text-center font-medium text-gray-300">
             {step.name}
           </span>
         </div>
@@ -195,20 +191,20 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
       {({ isValid, dirty, values, setFieldValue }) => (
         <Form>
           <motion.div
-            className="bg-white p-2 md:p-4 rounded-lg shadow space-y-4 max-w-sm mx-auto w-full"
+            className="bg-neutral-800 p-4 rounded-lg shadow space-y-4 max-w-md mx-auto w-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 border-b pb-2 flex items-center justify-center">
-              <FaUser className="mr-2 text-indigo-600" />
+            <h2 className="text-lg md:text-xl font-bold text-gray-300 border-b pb-2 flex items-center justify-center">
+              <FaUser className="mr-2 text-indigo-500" />
               Member Details
             </h2>
-            <div className="grid gap-2 md:gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col">
-                <label htmlFor="firstName" className="text-xs font-medium mb-0.5 text-gray-700 flex items-center">
-                  <FaUser className="mr-1 text-gray-500" />
+                <label htmlFor="firstName" className="text-sm font-medium mb-1 text-gray-300 flex items-center">
+                  <FaUser className="mr-1 text-gray-400" />
                   First Name
                 </label>
                 <Field
@@ -216,15 +212,15 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
                   name="firstName"
                   id="firstName"
                   placeholder="John"
-                  className="border rounded p-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm"
+                  className="border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 text-sm"
                   aria-required="true"
                 />
                 <ErrorMessage name="firstName" component="div" className="text-red-500 text-xs mt-0.5" />
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="lastName" className="text-xs font-medium mb-0.5 text-gray-700 flex items-center">
-                  <FaUser className="mr-1 text-gray-500" />
+                <label htmlFor="lastName" className="text-sm font-medium mb-1 text-gray-300 flex items-center">
+                  <FaUser className="mr-1 text-gray-400" />
                   Last Name
                 </label>
                 <Field
@@ -232,21 +228,21 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
                   name="lastName"
                   id="lastName"
                   placeholder="Doe"
-                  className="border rounded p-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm"
+                  className="border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 text-sm"
                   aria-required="true"
                 />
                 <ErrorMessage name="lastName" component="div" className="text-red-500 text-xs mt-0.5" />
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="gender" className="text-xs font-medium mb-0.5 text-gray-700">
+                <label htmlFor="gender" className="text-sm font-medium mb-1 text-gray-300 flex items-center">
                   Gender
                 </label>
                 <Field
                   as="select"
                   name="gender"
                   id="gender"
-                  className="border rounded p-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm"
+                  className="border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 text-sm"
                   aria-required="true"
                 >
                   <option value="">Select</option>
@@ -258,8 +254,8 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="email" className="text-xs font-medium mb-0.5 text-gray-700 flex items-center">
-                  <FaEnvelope className="mr-1 text-gray-500" />
+                <label htmlFor="email" className="text-sm font-medium mb-1 text-gray-300 flex items-center">
+                  <FaEnvelope className="mr-1 text-gray-400" />
                   Email
                 </label>
                 <Field
@@ -267,15 +263,15 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
                   name="email"
                   id="email"
                   placeholder="john.doe@example.com"
-                  className="border rounded p-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm"
+                  className="border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 text-sm"
                   aria-required="true"
                 />
                 <ErrorMessage name="email" component="div" className="text-red-500 text-xs mt-0.5" />
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="phone" className="text-xs font-medium mb-0.5 text-gray-700 flex items-center">
-                  <FaPhone className="mr-1 text-gray-500" />
+                <label htmlFor="phone" className="text-sm font-medium mb-1 text-gray-300 flex items-center">
+                  <FaPhone className="mr-1 text-gray-400" />
                   Phone
                 </label>
                 <Field
@@ -283,7 +279,7 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
                   name="phone"
                   id="phone"
                   placeholder="(555) 555-5555"
-                  className="border rounded p-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm"
+                  className="border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-neutral-700 text-gray-300 text-sm"
                   aria-required="true"
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '');
@@ -298,34 +294,39 @@ const MemberDetailsForm = ({ formData, setFormData, next }) => {
                 <small className="text-xs text-gray-500">Format: (555) 555-5555</small>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col md:col-span-2">
                 <CustomDatePicker label="Date of Birth" name="dob" id="dob" aria-required="true" />
               </div>
             </div>
 
-            <div className="flex items-center mt-2 space-x-1">
+            <div className="flex items-center mt-2 space-x-2">
               <Field
                 type="checkbox"
                 name="agreeToTexts"
                 id="agreeToTexts"
-                className="w-3 h-3 text-indigo-600 focus:ring-indigo-400 border-gray-300 rounded"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded"
                 aria-checked={values.agreeToTexts}
               />
-              <label htmlFor="agreeToTexts" className="text-gray-700 text-sm">
+              <label htmlFor="agreeToTexts" className="text-gray-300 text-sm">
                 Get the text confirmation
               </label>
             </div>
 
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end mt-6">
               <button
                 type="submit"
                 disabled={!(isValid && dirty)}
-                className={`px-3 py-1.5 rounded-md text-white ${
-                  isValid && dirty ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-300 cursor-not-allowed'
-                } transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm`}
+                className={classNames(
+                  'flex items-center space-x-2 px-4 py-2 rounded-md text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm',
+                  {
+                    'bg-indigo-600 hover:bg-indigo-700': isValid && dirty,
+                    'bg-indigo-400 cursor-not-allowed': !(isValid && dirty),
+                  }
+                )}
                 aria-disabled={!(isValid && dirty)}
               >
-                Next
+                <FaArrowRight />
+                <span>Next</span>
               </button>
             </div>
           </motion.div>
@@ -361,26 +362,26 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
       {({ values, isValid, dirty, setFieldValue }) => (
         <Form>
           <motion.div
-            className="bg-white p-2 md:p-4 rounded-lg shadow space-y-4 max-w-sm mx-auto w-full"
+            className="bg-neutral-800 p-4 rounded-lg shadow space-y-4 max-w-md mx-auto w-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 border-b pb-2 flex items-center justify-center">
-              <FaRunning className="mr-2 text-indigo-600" />
+            <h2 className="text-lg md:text-xl font-bold text-gray-300 border-b pb-2 flex items-center justify-center">
+              <FaRunning className="mr-2 text-indigo-500" />
               Tryout Selection
             </h2>
 
-            <div className="flex flex-col sm:flex-row sm:space-x-3">
+            <div className="flex flex-col sm:flex-row sm:space-x-4">
               {['Individual', 'Doubles'].map((type) => (
-                <label key={type} className="flex-1 cursor-pointer" aria-label={`Select ${type} tryout`}>
+                <label key={type} className="flex-1 cursor-pointer">
                   <div
                     className={classNames(
-                      'border rounded-lg p-2 flex items-center justify-center transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400',
+                      'border rounded-md p-3 flex items-center justify-center transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500',
                       {
                         'bg-indigo-600 text-white border-indigo-600': values.tryoutType === type,
-                        'bg-white text-gray-700 border-gray-300 hover:bg-indigo-50': values.tryoutType !== type,
+                        'bg-transparent text-gray-300 border-gray-600 hover:bg-indigo-700 hover:text-white': values.tryoutType !== type,
                       }
                     )}
                     onClick={() => setFieldValue('tryoutType', type)}
@@ -405,10 +406,10 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
                 <div
                   key={trial.name}
                   className={classNames(
-                    'flex flex-col sm:flex-row sm:items-center p-2 border rounded-lg transition-all duration-200 ease-in-out cursor-pointer hover:shadow-lg',
+                    'flex flex-col sm:flex-row sm:items-center p-3 border rounded-md transition-all duration-200 ease-in-out cursor-pointer hover:shadow-lg',
                     {
-                      'bg-indigo-50 border-indigo-400': values.selectedTrial === trial.name,
-                      'bg-white border-gray-300': values.selectedTrial !== trial.name,
+                      'bg-indigo-700 border-indigo-500': values.selectedTrial === trial.name,
+                      'bg-neutral-700 border-gray-600': values.selectedTrial !== trial.name,
                     }
                   )}
                   onClick={() => setFieldValue('selectedTrial', trial.name)}
@@ -421,11 +422,11 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
                   }}
                   aria-pressed={values.selectedTrial === trial.name}
                 >
-                  <div className="flex items-center mb-1 sm:mb-0 sm:mr-3">
-                    <div className="text-xl text-indigo-600 mr-2">{trial.icon}</div>
+                  <div className="flex items-center mb-2 sm:mb-0 sm:mr-4">
+                    <div className="text-xl text-indigo-500 mr-2">{trial.icon}</div>
                     <div>
-                      <div className="font-semibold text-gray-900 text-sm">{trial.name}</div>
-                      <div className="text-xs text-gray-600">
+                      <div className="font-semibold text-gray-300 text-sm">{trial.name}</div>
+                      <div className="text-xs text-gray-400">
                         Time: {trial.time}, Cost: {trial.cost}
                       </div>
                     </div>
@@ -433,7 +434,7 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
                   <button
                     type="button"
                     className={classNames(
-                      'px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200',
+                      'px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500',
                       {
                         'bg-indigo-600 text-white cursor-default': values.selectedTrial === trial.name,
                         'bg-indigo-500 text-white hover:bg-indigo-600': values.selectedTrial !== trial.name,
@@ -444,7 +445,7 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
                   >
                     {values.selectedTrial === trial.name ? (
                       <>
-                        <FaCheckCircle className="inline-block mr-1" />
+                        <FaCheck className="inline-block mr-1" />
                         SELECTED
                       </>
                     ) : (
@@ -456,11 +457,11 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
             </div>
             <ErrorMessage name="selectedTrial" component="div" className="text-red-500 text-xs mt-0.5" />
 
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between mt-6">
               <button
                 type="button"
                 onClick={back}
-                className="flex items-center space-x-1 px-3 py-1 rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm"
+                className="flex items-center space-x-1 px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               >
                 <FaArrowLeft />
                 <span>Back</span>
@@ -469,10 +470,10 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
                 type="submit"
                 disabled={!(isValid && dirty)}
                 className={classNames(
-                  'flex items-center space-x-1 px-3 py-1 rounded-md text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm',
+                  'flex items-center space-x-1 px-4 py-2 rounded-md text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm',
                   {
                     'bg-indigo-600 hover:bg-indigo-700': isValid && dirty,
-                    'bg-indigo-300 cursor-not-allowed': !(isValid && dirty),
+                    'bg-indigo-400 cursor-not-allowed': !(isValid && dirty),
                   }
                 )}
                 aria-disabled={!(isValid && dirty)}
@@ -492,7 +493,7 @@ const TryoutSelectionForm = ({ formData, setFormData, next, back }) => {
 const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
   const [numPages, setNumPages] = useState(null);
   const sigCanvasRef = useRef({});
-  const [pdfWidth, setPdfWidth] = useState(300); // Reduced width from 600 to 300
+  const [pdfWidth, setPdfWidth] = useState(300); // Reduced width for better UI
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = Yup.object({
@@ -517,9 +518,9 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
 
   const handleResize = () => {
     if (window.innerWidth < 768) {
-      setPdfWidth(window.innerWidth * 0.9); // Reduced to 90%
+      setPdfWidth(window.innerWidth * 0.9); // Responsive width
     } else {
-      setPdfWidth(300); // Reduced from 600 to 300
+      setPdfWidth(300); // Fixed width for larger screens
     }
   };
 
@@ -552,14 +553,14 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
       {({ setFieldValue, isValid, dirty, values }) => (
         <Form>
           <motion.div
-            className="bg-white p-2 md:p-4 rounded-lg shadow-lg space-y-4 max-w-sm mx-auto w-full"
+            className="bg-neutral-800 p-4 rounded-lg shadow-lg space-y-4 max-w-md mx-auto w-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 border-b pb-2 flex items-center justify-center">
-              <FaCheckCircle className="mr-2 text-green-600" />
+            <h2 className="text-lg md:text-xl font-bold text-gray-300 border-b pb-2 flex items-center justify-center">
+              <FaCheckCircle className="mr-2 text-green-500" />
               Tryout Waiver
             </h2>
             <div className="flex flex-col items-center">
@@ -571,7 +572,7 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
                   loading={
                     <div className="flex justify-center items-center h-40">
                       <svg
-                        className="animate-spin h-6 w-6 text-indigo-600"
+                        className="animate-spin h-6 w-6 text-indigo-500"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -604,31 +605,31 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
                 </Document>
               </div>
 
-              <div className="w-full flex items-center mb-2">
+              <div className="flex items-center mb-2">
                 <Field
                   type="checkbox"
                   name="hasReadWaiver"
                   id="hasReadWaiver"
-                  className="w-3 h-3 text-indigo-600 focus:ring-indigo-400 border-gray-300 rounded"
+                  className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded"
                   aria-checked={values.hasReadWaiver}
                 />
-                <label htmlFor="hasReadWaiver" className="ml-1 text-gray-700 text-sm">
+                <label htmlFor="hasReadWaiver" className="ml-2 text-gray-300 text-sm">
                   I have read and understood the waiver.
                 </label>
               </div>
               <ErrorMessage name="hasReadWaiver" component="div" className="text-red-500 text-xs mt-0.5" />
 
               <div className="w-full">
-                <label className="text-sm font-medium mb-0.5 text-gray-700 block">
+                <label className="text-sm font-medium mb-1 text-gray-300 block">
                   Signature <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <SignatureCanvas
-                    penColor="black"
+                    penColor="white"
                     canvasProps={{
                       width: pdfWidth,
-                      height: 150, // Reduced height for smaller size
-                      className: "border rounded-lg w-full",
+                      height: 150, // Reduced height for better UI
+                      className: "border border-gray-600 rounded-lg bg-neutral-700",
                     }}
                     ref={sigCanvasRef}
                     onEnd={() => {
@@ -641,15 +642,15 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
                   />
                   {!values.signedWaiver && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <span className="text-gray-400 text-xs">Sign here</span>
+                      <span className="text-gray-500 text-xs">Sign here</span>
                     </div>
                   )}
                 </div>
-                <div className="flex justify-end space-x-2 mt-1">
+                <div className="flex justify-end space-x-2 mt-2">
                   <button
                     type="button"
                     onClick={() => clearSignature(setFieldValue)}
-                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-xs"
+                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-xs"
                   >
                     Clear Signature
                   </button>
@@ -663,11 +664,11 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
               </div>
             </div>
 
-            <div className="flex justify-between mt-3">
+            <div className="flex justify-between mt-6">
               <button
                 type="button"
                 onClick={back}
-                className="flex items-center space-x-1 px-3 py-1 rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm"
+                className="flex items-center space-x-1 px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               >
                 <FaArrowLeft />
                 <span>Back</span>
@@ -676,10 +677,10 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
                 type="submit"
                 disabled={!(isValid && dirty) || isSubmitting}
                 className={classNames(
-                  'flex items-center space-x-1 px-3 py-1 rounded-md text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm',
+                  'flex items-center space-x-1 px-4 py-2 rounded-md text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm',
                   {
                     'bg-green-600 hover:bg-green-700': isValid && dirty && !isSubmitting,
-                    'bg-green-300 cursor-not-allowed': !(isValid && dirty) || isSubmitting,
+                    'bg-green-400 cursor-not-allowed': !(isValid && dirty) || isSubmitting,
                   }
                 )}
                 aria-disabled={!(isValid && dirty) || isSubmitting}
@@ -721,15 +722,15 @@ const TryoutWaiverForm = ({ formData, setFormData, next, back }) => {
 // Confirmation Component
 const Confirmation = () => (
   <motion.div
-    className="bg-white p-2 md:p-4 rounded-lg shadow text-center max-w-sm mx-auto w-full"
+    className="bg-neutral-800 p-4 rounded-lg shadow-lg text-center max-w-md mx-auto w-full"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     transition={{ duration: 0.3 }}
   >
-    <FaCheckCircle className="text-green-600 text-3xl md:text-4xl mx-auto mb-3" />
-    <h2 className="text-lg md:text-xl font-bold text-gray-900">Thank You!</h2>
-    <p className="text-gray-700 mt-1 text-sm">
+    <FaCheckCircle className="text-green-500 text-3xl md:text-4xl mx-auto mb-3" />
+    <h2 className="text-lg md:text-xl font-bold text-gray-300">Thank You!</h2>
+    <p className="text-gray-400 mt-1 text-sm">
       Your registration has been successfully submitted. We look forward to seeing you at the tryout!
     </p>
   </motion.div>
@@ -815,11 +816,11 @@ export default function MembershipForm() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-100 to-white p-2 md:p-4 font-sans text-gray-700 flex flex-col items-center justify-center min-h-full overflow-x-hidden">
-      <div className="max-w-sm sm:max-w-md md:max-w-lg w-full space-y-6">
+    <div className="bg-neutral-900 p-4 font-sans text-gray-300 flex flex-col items-center justify-center min-h-full overflow-x-hidden">
+      <div className="max-w-md sm:max-w-lg w-full space-y-6">
         <div className="flex items-center space-x-2 justify-center">
-          <FaRunning className="text-indigo-600 text-2xl md:text-3xl" />
-          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">Tryout Registration</h1>
+          <FaRunning className="text-indigo-500 text-3xl" />
+          <h1 className="text-2xl font-extrabold text-gray-300">Tryout Registration</h1>
         </div>
 
         {!isSubmitted && <ProgressIndicator steps={steps} currentStep={currentStep} />}

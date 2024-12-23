@@ -19,11 +19,13 @@ import {
   FaHome, // Home icon
   FaInfoCircle, // About icon
   FaEnvelopeSquare, // Join Now button icon
+  FaVideo, // Video icon for About Us
+  FaImages, // Images icon for About Us
+  FaQuoteLeft, // Quote icon for Testimonials
 } from 'react-icons/fa';
 import { motion, AnimatePresence, useAnimation, useInView } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CountUp from 'react-countup';
 import FocusTrap from 'focus-trap-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -35,7 +37,7 @@ import SwiperCore, * as swiper from 'swiper';
 import { Helmet } from 'react-helmet'; // Import Helmet
 
 // Initialize Swiper modules
-SwiperCore.use([swiper.Autoplay, swiper.Pagination]);
+SwiperCore.use([swiper.Autoplay, swiper.Pagination, swiper.Navigation]);
 
 // Lazy load MembershipForm for performance optimization
 const MembershipForm = lazy(() => import('./MembershipForm'));
@@ -91,7 +93,7 @@ const Modal = React.memo(({ showModal, setShowModal, children }) => {
               {/* Close Button */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 text-gray-300 hover:text-primary focus:outline-none"
+                className="absolute top-4 right-4 text-gray-300 hover:text-secondary focus:outline-none border border-transparent hover:border-secondary p-2 rounded-md transition-colors duration-200"
                 aria-label="Close Modal"
               >
                 <FaTimes size={20} aria-hidden="true" />
@@ -123,19 +125,20 @@ const NavLinks = React.memo(({ openModal, isSidebar = false, closeSidebar }) => 
       {sections.map((section) => (
         <ScrollLink
           key={section.name}
-          activeClass="text-primary border-b-2 border-primary bg-neutral-700"
+          activeClass="text-secondary border-b-4 border-secondary bg-neutral-700"
           to={section.name.toLowerCase()}
           spy={true}
           smooth={true}
           offset={-70}
           duration={500}
-          className="flex items-center cursor-pointer text-gray-300 hover:text-primary hover:bg-neutral-700 transition-colors duration-200 px-3 py-2 group rounded-md"
+          className="flex items-center cursor-pointer text-gray-300 hover:text-secondary hover:bg-neutral-700 transition-colors duration-200 px-3 py-2 group rounded-md border border-transparent hover:border-secondary"
           tabIndex="0"
           onClick={() => {
             if (isSidebar) closeSidebar();
           }}
           role="tab"
           aria-label={section.name}
+          aria-current={section.name === 'Home' ? 'page' : undefined} // Dynamically set aria-current
         >
           <span className="text-lg mr-2 transition-transform duration-200 group-hover:translate-x-1">
             {section.icon}
@@ -149,7 +152,7 @@ const NavLinks = React.memo(({ openModal, isSidebar = false, closeSidebar }) => 
           openModal();
           if (isSidebar) closeSidebar();
         }}
-        className="ml-4 flex items-center px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 cursor-pointer text-center focus:outline-none focus:ring-2 focus:ring-primary"
+        className="ml-4 flex items-center px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 cursor-pointer text-center focus:outline-none focus:ring-2 focus:ring-secondary "
         aria-label="Join Now"
       >
         <FaEnvelopeSquare className="mr-2" aria-hidden="true" />
@@ -165,8 +168,8 @@ const NavLinks = React.memo(({ openModal, isSidebar = false, closeSidebar }) => 
 const Sidebar = React.memo(({ isOpen, closeSidebar, openModal }) => {
   const sidebarVariants = {
     hidden: { x: '100%' }, // Start off-screen to the right
-    visible: { x: '0%' },  // Slide into view
-    exit: { x: '100%' },   // Slide out to the right
+    visible: { x: '0%' }, // Slide into view
+    exit: { x: '100%' }, // Slide out to the right
   };
 
   const sidebarRef = useRef(null);
@@ -198,15 +201,14 @@ const Sidebar = React.memo(({ isOpen, closeSidebar, openModal }) => {
               ref={sidebarRef}
             >
               <div className="flex items-center justify-between mb-8">
-                {/* Logo */}
+                {/* Menu Title */}
                 <div className="flex items-center">
-                  <FaRunning className="text-primary text-2xl" aria-hidden="true" />
-                  <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
+                  <span className="font-bold text-xl text-gray-300">Menu</span>
                 </div>
                 {/* Close Button */}
                 <button
                   onClick={closeSidebar}
-                  className="text-gray-300 hover:text-primary focus:outline-none"
+                  className="text-gray-300 hover:text-secondary focus:outline-none border border-transparent hover:border-secondary p-2 rounded-md transition-colors duration-200"
                   aria-label="Close Sidebar"
                 >
                   <FaTimes size={20} aria-hidden="true" />
@@ -243,18 +245,23 @@ const Header = React.memo(({ openModal, toggleSidebar, isSidebarOpen }) => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <FaRunning className="text-primary text-3xl" aria-hidden="true" />
+            <img
+              src="/logo.png" // Ensure this image is in your public directory
+              alt="Big Monkey Logo"
+              className="h-8 w-8" // Adjust size as needed
+              loading="lazy"
+            />
             <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
           </div>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8 items-center" aria-label="Primary Navigation">
             <NavLinks openModal={openModal} />
           </nav>
-          {/* Mobile Hamburger/Close Menu */}
+          {/* Mobile Hamburger Menu */}
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleSidebar}
-              className="text-gray-300 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary p-2 rounded-md transition-colors duration-200"
+              className="text-gray-300 hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary border border-transparent hover:border-secondary p-2 rounded-md transition-colors duration-200"
               aria-label={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
               aria-expanded={isSidebarOpen}
               aria-controls="mobile-menu"
@@ -301,6 +308,184 @@ const AnimatedSection = ({ children, delay = 0 }) => {
 };
 
 /**
+ * ImageGallery Component
+ */
+const ImageGallery = React.memo(({ images }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openImageModal = useCallback((image) => setSelectedImage(image), []);
+  const closeImageModal = useCallback(() => setSelectedImage(null), []);
+
+  return (
+    <>
+      <Swiper
+        spaceBetween={10}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 5000 }}
+        loop
+        className="w-full"
+      >
+        {images.map((img, index) => (
+          <SwiperSlide key={index}>
+            <div
+              className="relative cursor-pointer group"
+              onClick={() => openImageModal(img)}
+              role="button"
+              tabIndex="0"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') openImageModal(img);
+              }}
+              aria-label={`Open image: ${img.alt}`}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="w-full h-64 object-cover rounded-lg shadow-lg"
+                loading="lazy"
+              />
+              <div
+                className="absolute inset-0 bg-black bg-opacity-25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg"
+                aria-hidden="true"
+              >
+                <FaImages className="text-white text-3xl" />
+              </div>
+              {img.caption && (
+                <div className="absolute bottom-2 left-2 text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+                  {img.caption}
+                </div>
+              )}
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* Image Modal */}
+      <Modal showModal={!!selectedImage} setShowModal={closeImageModal}>
+        {selectedImage && (
+          <div className="flex flex-col items-center">
+            <img
+              src={selectedImage.src}
+              alt={selectedImage.alt}
+              className="w-full h-auto object-contain rounded-lg shadow-lg mb-6"
+              loading="lazy"
+            />
+            {selectedImage.caption && (
+              <p className="text-gray-300 mb-4">{selectedImage.caption}</p>
+            )}
+            <button
+              onClick={closeImageModal}
+              className="mt-2 px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary"
+              aria-label="Close Image Modal"
+            >
+              Close
+            </button>
+          </div>
+        )}
+      </Modal>
+    </>
+  );
+});
+
+/**
+ * VideoModal Component
+ */
+const VideoModal = React.memo(({ videoUrl, closeModal }) => (
+  <Modal showModal={!!videoUrl} setShowModal={closeModal}>
+    {videoUrl && (
+      <div className="flex flex-col items-center">
+        <div className="relative w-full h-0" style={{ paddingBottom: '56.25%' }}>
+          <iframe
+            src={videoUrl}
+            title="Big Monkey Promotional Video"
+            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <button
+          onClick={closeModal}
+          className="mt-4 px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary"
+          aria-label="Close Video Modal"
+        >
+          Close
+        </button>
+      </div>
+    )}
+  </Modal>
+));
+
+/**
+ * Testimonials Component
+ */
+const Testimonials = React.memo(() => {
+  // Array of testimonial objects
+  const testimonials = [
+    {
+      quote: "Big Monkey transformed my fitness journey! The trainers are top-notch and the community is amazing.",
+      name: "John Doe",
+      position: "Professional Boxer",
+      avatar: "/testimonials/john.jpg",
+    },
+    {
+      quote: "I've never felt more confident and strong. Highly recommend Big Monkey to anyone serious about boxing.",
+      name: "Jane Smith",
+      position: "Fitness Enthusiast",
+      avatar: "/testimonials/jane.jpg",
+    },
+    {
+      quote: "The group classes are incredibly motivating. I've achieved goals I never thought possible.",
+      name: "Mike Johnson",
+      position: "Personal Trainer",
+      avatar: "/testimonials/mike.jpg",
+    },
+    // Add more testimonials as needed
+  ];
+
+  return (
+    // Swiper component for the carousel
+    <Swiper
+      spaceBetween={30} // Space between slides
+      slidesPerView={1} // Number of slides to show at once
+      autoplay={{ delay: 7000 }} // Autoplay with a delay of 7000ms
+      pagination={{ clickable: true }} // Clickable pagination dots
+      navigation // Navigation buttons
+      loop // Infinite loop
+      className="mt-20 " // Full width
+    >
+      {testimonials.map((testimonial, index) => (
+        // SwiperSlide component for each testimonial
+        <SwiperSlide key={index}>
+          <motion.div
+            className="bg-neutral-700 p-6 rounded-lg shadow-lg text-center" // Styling for the testimonial card
+            initial={{ opacity: 0, scale: 0.95 }} // Initial animation state
+            animate={{ opacity: 1, scale: 1 }} // Animation state
+            transition={{ duration: 0.6 }} // Animation duration
+          >
+            <FaQuoteLeft className="text-secondary text-3xl mx-auto mb-4" aria-hidden="true" /> {/* Quote icon */}
+            <p className="text-gray-300 italic mb-4">"{testimonial.quote}"</p> {/* Testimonial quote */}
+            <div className="flex items-center justify-center space-x-4">
+              <img
+                src={testimonial.avatar}
+                alt={`${testimonial.name}'s avatar`}
+                className="w-12 h-12 rounded-full object-cover shadow-md" // Avatar styling
+                loading="lazy" // Lazy loading for the image
+              />
+              <div>
+                <p className="text-gray-200 font-semibold">{testimonial.name}</p> {/* Testimonial name */}
+                <p className="text-gray-400 text-sm">{testimonial.position}</p> {/* Testimonial position */}
+              </div>
+            </div>
+          </motion.div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  );
+});
+
+/**
  * Hero Section Component
  */
 const HeroSection = React.memo(({ openModal }) => (
@@ -312,13 +497,13 @@ const HeroSection = React.memo(({ openModal }) => (
     {/* Background Video */}
     <video
       className="absolute top-0 left-0 w-full h-full object-cover"
-      src="/boxing-hero.mp4" // Ensure this video is in your public directory
+      src="/boxing-hero.mp4"
       autoPlay
       loop
       muted
       playsInline
       aria-hidden="true"
-      preload="auto"
+      preload="metadata" // Changed from "auto" to "metadata" for better performance
     >
       {/* Fallback Image */}
       <source src="/boxing-hero.mp4" type="video/mp4" />
@@ -362,7 +547,7 @@ const HeroSection = React.memo(({ openModal }) => (
       <AnimatedSection delay={0.6}>
         <motion.button
           onClick={openModal}
-          className="px-6 py-3 bg-transparent border border-primary text-primary rounded-md text-lg font-medium hover:bg-primary hover:text-white transition-colors duration-200 inline-block focus:outline-none focus:ring-2 focus:ring-primary"
+          className="px-6 py-3 bg-transparent border border-primary text-primary rounded-md text-lg font-medium hover:bg-primary hover:text-white transition-colors duration-200 inline-block focus:outline-none focus:ring-2 focus:ring-secondary active:scale-95"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
@@ -375,151 +560,200 @@ const HeroSection = React.memo(({ openModal }) => (
 ));
 
 /**
- * About Section Component
+ * About Section Component with Statistics, Media Tabs, and Testimonials
  */
-const AboutSection = React.memo(() => (
-  <section id="about" className="py-20 bg-neutral-800" role="region" aria-labelledby="about-heading">
-    <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8"/>
-      {/* Section Header */}
-      <AnimatedSection>
-        <div className="text-center mb-12">
-          <h2 id="about-heading" className="text-3xl font-bold text-gray-300">
-            About Us
-          </h2>
-          <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
-            At Big Monkey, we believe in the power of boxing to transform lives. Our experienced trainers are
-            dedicated to helping you achieve your fitness and personal goals in a supportive environment.
-          </p>
-        </div>
-      </AnimatedSection>
+const AboutSection = React.memo(() => {
+  const [activeTab, setActiveTab] = useState('Videos');
+  const [videoModal, setVideoModal] = useState(null);
 
-      {/* Statistics */}
-      <AnimatedSection delay={0.2}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
-          <div className="text-center">
-            <CountUp
-              start={0}
-              end={100}
-              duration={2}
-              suffix="+"
-              className="block text-4xl font-bold text-primary"
-            />
-            <p className="mt-2 text-gray-300">Members</p>
-          </div>
-          <div className="text-center">
-            <CountUp
-              start={0}
-              end={50}
-              duration={2}
-              suffix="+"
-              className="block text-4xl font-bold text-primary"
-            />
-            <p className="mt-2 text-gray-300">Programs</p>
-          </div>
-          <div className="text-center">
-            <CountUp
-              start={0}
-              end={95}
-              duration={2}
-              suffix="%"
-              className="block text-4xl font-bold text-primary"
-            />
-            <p className="mt-2 text-gray-300">Success Rate</p>
-          </div>
-        </div>
-      </AnimatedSection>
+  const openVideoModal = useCallback((videoUrl) => setVideoModal(videoUrl), []);
+  const closeVideoModal = useCallback(() => setVideoModal(null), []);
 
-      {/* About Content */}
-      <AnimatedSection delay={0.4}>
-        <div className="flex flex-col md:flex-row items-center md:space-x-6">
-          <div className="md:w-1/2 relative group mb-8 md:mb-0">
-            <img
-              src="/about-boxing.jpg" // Ensure this image is in your public directory
-              alt="Big Monkey Training Session"
-              className="rounded-lg shadow-lg w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div
-              className="absolute inset-0 bg-primary bg-opacity-25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"
-              aria-hidden="true"
-            ></div>
-          </div>
-          <div className="md:w-1/2">
-            <p className="text-gray-300 mb-4">
-              Whether you're a beginner or an experienced boxer, our programs are tailored to fit your needs. We
-              focus on technique, conditioning, and mental toughness to ensure you get the most out of every
-              session.
+  const photos = [
+    { src: '/about/photos/photo1.jpg', alt: 'Training Session 1', caption: 'Intense training with our expert coaches.' },
+    { src: '/about/photos/photo2.jpg', alt: 'Training Session 2', caption: 'Group classes fostering community spirit.' },
+    { src: '/about/photos/photo3.jpg', alt: 'Training Session 3', caption: 'Personalized coaching tailored to your goals.' },
+    { src: '/about/photos/photo4.jpg', alt: 'Training Session 4', caption: 'Achieving new heights together.' },
+    // Add more photos as needed
+  ];
+
+  const videos = [
+    {
+      id: 1,
+      title: 'Promotional Video',
+      thumbnail: '/about/video-thumbnail1.jpg',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      alt: 'Promotional Video 1',
+      caption: 'Watch our promotional video to learn more about Big Monkey.',
+    },
+    {
+      id: 2,
+      title: 'Training Tips',
+      thumbnail: '/about/video-thumbnail2.jpg',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      alt: 'Training Tips Video',
+      caption: 'Get expert training tips from our experienced coaches.',
+    },
+    // Add more videos as needed
+  ];
+
+  // Statistics Data
+  const statistics = [
+    { id: 1, label: 'Members', value: '100+' },
+    { id: 2, label: 'Success Rate', value: '95%' },
+  ];
+
+  return (
+    <section id="about" className="py-24 bg-neutral-900" role="region" aria-labelledby="about-heading">
+      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <AnimatedSection>
+          <div className="text-center mb-12">
+            <h2 id="about-heading" className="text-3xl font-bold text-gray-200">
+              About Us
+            </h2>
+            <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
+              At Big Monkey, we believe in the power of boxing to transform lives. Our experienced trainers are
+              dedicated to helping you achieve your fitness and personal goals in a supportive environment.
             </p>
-            <p className="text-gray-300 mb-6">
-              Join us today and become part of a community that supports and motivates each other to reach new
-              heights.
-            </p>
-
-            {/* Testimonials Carousel */}
-            <Swiper
-              spaceBetween={30}
-              centeredSlides
-              autoplay={{
-                delay: 7000,
-                disableOnInteraction: false,
-              }}
-              pagination={{ clickable: true }}
-              className="w-full"
-              aria-label="Testimonials Carousel"
-              // Responsive configuration to ensure proper display on mobile devices
-              breakpoints={{
-                0: {
-                  slidesPerView: 1,
-                },
-                640: {
-                  slidesPerView: 1,
-                },
-                768: {
-                  slidesPerView: 1,
-                },
-                1024: {
-                  slidesPerView: 1,
-                },
-              }}
-            >
-              <SwiperSlide>
-                <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
-                  <p className="text-gray-300 mb-4">
-                    "Big Monkey transformed my life! The trainers are amazing and the community is incredibly supportive."
-                  </p>
-                  <h4 className="text-primary font-semibold">- Sarah L.</h4>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
-                  <p className="text-gray-300 mb-4">
-                    "I've never felt stronger or more confident. The programs are well-structured and effective."
-                  </p>
-                  <h4 className="text-primary font-semibold">- Mike D.</h4>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
-                  <p className="text-gray-300 mb-4">
-                    "A fantastic place to train! The facilities are top-notch and the staff truly cares about your progress."
-                  </p>
-                  <h4 className="text-primary font-semibold">- Jessica K.</h4>
-                </div>
-              </SwiperSlide>
-            </Swiper>
           </div>
-        </div>
-      </AnimatedSection>
+        </AnimatedSection>
+
+        {/* Statistics Section */}
+        <AnimatedSection delay={0.2}>
+          <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-12 mb-12">
+            {statistics.map((stat) => (
+              <div key={stat.id} className="flex flex-col items-center mb-6 sm:mb-0">
+                <h3 className="text-4xl font-bold text-secondary">{stat.value}</h3>
+                <p className="text-gray-300">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        {/* Main Content: Media and Testimonials */}
+        <AnimatedSection delay={0.4}>
+          <div className="flex flex-col lg:flex-row lg:space-x-12">
+            {/* Left Side: Media Tabs and Content */}
+            <div className="lg:w-2/3">
+              {/* Media Tabs */}
+              <div className="mb-6 flex justify-center space-x-4" role="tablist" aria-label="Media Tabs">
+                {['Videos', 'Images'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2 rounded-md border ${
+                      activeTab === tab
+                        ? 'bg-secondary text-white border-secondary'
+                        : 'bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-white transition-colors duration-200'
+                    } focus:outline-none focus:ring-2 focus:ring-secondary`}
+                    role="tab"
+                    aria-selected={activeTab === tab}
+                    aria-controls={`media-${tab.toLowerCase()}`}
+                    id={`tab-${tab.toLowerCase()}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Media Content */}
+              <div>
+                {activeTab === 'Videos' && (
+                  <div
+                    id="media-videos"
+                    role="tabpanel"
+                    aria-labelledby="tab-videos"
+                    className="transition-opacity duration-500"
+                  >
+                    <h3 className="text-2xl font-semibold text-gray-200 mb-4 flex items-center">
+                      <FaVideo className="mr-2" aria-hidden="true" />
+                      Our Videos
+                    </h3>
+                    <Swiper
+                      spaceBetween={10}
+                      slidesPerView={1}
+                      navigation
+                      pagination={{ clickable: true }}
+                      autoplay={{ delay: 7000 }}
+                      loop
+                      className="w-full"
+                    >
+                      {videos.map((video) => (
+                        <SwiperSlide key={video.id}>
+                          <div
+                            className="relative cursor-pointer group"
+                            onClick={() => openVideoModal(video.videoUrl)}
+                            role="button"
+                            tabIndex="0"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') openVideoModal(video.videoUrl);
+                            }}
+                            aria-label={`Open video: ${video.title}`}
+                          >
+                            <img
+                              src={video.thumbnail}
+                              alt={video.alt}
+                              className="w-full h-64 object-cover rounded-lg shadow-lg"
+                              loading="lazy"
+                            />
+                            <div
+                              className="absolute inset-0 bg-black bg-opacity-25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg"
+                              aria-hidden="true"
+                            >
+                              <FaVideo className="text-white text-3xl" />
+                            </div>
+                            {video.caption && (
+                              <div className="absolute bottom-2 left-2 text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+                                {video.caption}
+                              </div>
+                            )}
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                )}
+
+                {activeTab === 'Images' && (
+                  <div
+                    id="media-images"
+                    role="tabpanel"
+                    aria-labelledby="tab-images"
+                    className="transition-opacity duration-500"
+                  >
+                    <h3 className="text-2xl font-semibold text-gray-200 mb-4 flex items-center">
+                      <FaImages className="mr-2" aria-hidden="true" />
+                      Our Photos
+                    </h3>
+                    <ImageGallery images={photos} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Side: Testimonials */}
+            <div className="lg:w-1/3 mt-8 lg:mt-0">
+              <div className="sticky top-24">
+                <Testimonials />
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+      </div>
+
+      {/* Video Modal */}
+      {videoModal && <VideoModal videoUrl={videoModal} closeModal={closeVideoModal} />}
     </section>
-  )
-);
+  );
+});
 
 /**
  * Enhanced Program Card Component
  */
 const EnhancedProgramCard = React.memo(({ program, openProgramModal }) => (
   <motion.div
-    className="bg-neutral-700 rounded-lg shadow-lg p-6 text-center cursor-pointer transform transition-transform duration-300 hover:scale-105"
+    className="bg-neutral-700 rounded-lg shadow-lg p-6 text-center cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl border border-transparent hover:border-secondary"
     whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0,0,0,0.2)' }}
     transition={{ duration: 0.3 }}
     onClick={() => openProgramModal(program)}
@@ -530,12 +764,12 @@ const EnhancedProgramCard = React.memo(({ program, openProgramModal }) => (
     }}
     aria-label={`Learn more about ${program.title}`}
   >
-    <div className="text-primary text-4xl mx-auto mb-4" aria-hidden="true">
+    <div className="text-secondary text-4xl mx-auto mb-4" aria-hidden="true">
       {program.icon}
     </div>
-    <h3 className="text-xl font-semibold text-gray-300 mb-2">{program.title}</h3>
+    <h3 className="text-xl font-semibold text-gray-200 mb-2">{program.title}</h3>
     <p className="text-gray-400 mb-4">{program.description}</p>
-    <span className="text-primary font-medium">{program.category}</span>
+    <span className="text-secondary font-medium">{program.category}</span>
   </motion.div>
 ));
 
@@ -545,7 +779,7 @@ const EnhancedProgramCard = React.memo(({ program, openProgramModal }) => (
 const ProgramDetailsModal = React.memo(({ program, closeModal }) => (
   <Modal showModal={!!program} setShowModal={closeModal}>
     <div className="p-6">
-      <h2 id="modal-heading" className="text-2xl font-bold text-gray-300 mb-4">
+      <h2 id="modal-heading" className="text-2xl font-bold text-gray-200 mb-4">
         {program.title}
       </h2>
       <div className="flex flex-col md:flex-row items-center">
@@ -566,7 +800,8 @@ const ProgramDetailsModal = React.memo(({ program, closeModal }) => (
           </ul>
           <button
             onClick={closeModal}
-            className="mt-4 px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-4 px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary"
+            aria-label="Close Program Details"
           >
             Close
           </button>
@@ -585,31 +820,52 @@ const ProgramsSection = React.memo(() => {
 
   const programs = [
     {
-      id: 'individual-class', // Updated ID
+      id: 'individual-class',
       icon: <FaRunning />,
-      title: 'Individual Class', // Updated Title
+      title: 'Individual Class',
       description: 'Personalized boxing training tailored to your goals.',
       detailedDescription:
         'Our Individual Class program offers one-on-one training sessions with experienced coaches. Focus on personalized techniques, strength conditioning, and strategic planning to achieve your specific fitness and boxing goals.',
       features: ['Personalized Training', 'Technique Refinement', 'Strength Conditioning', 'Strategic Planning'],
-      category: 'Individual', // Updated Category
-      image: '/programs/individual-class.jpg', // Updated Image Path (ensure this image exists)
+      category: 'Individual',
+      image: '/programs/individual-class.jpg',
     },
     {
-      id: 'group-classes',
+      id: 'kids-group',
       icon: <FaUserFriends />,
-      title: 'Group Classes',
-      description: 'Join dynamic group sessions that combine boxing with cardio workouts.',
+      title: 'Kids Group',
+      description: 'Fun and engaging boxing classes designed for children.',
       detailedDescription:
-        'Our Group Classes offer a fun and energetic environment where you can engage in boxing drills, cardio exercises, and team-based challenges to keep you motivated.',
-      features: ['Cardio Boxing', 'Team Challenges', 'Motivational Coaching', 'Flexible Schedules'],
+        'Our Kids Group program is tailored to introduce children to the fundamentals of boxing in a safe and supportive environment. Focus on discipline, coordination, and confidence-building.',
+      features: ['Age-Appropriate Training', 'Discipline and Focus', 'Coordination Exercises', 'Confidence Building'],
       category: 'Group',
-      image: '/programs/group-classes.jpg',
+      image: '/programs/kids-group.jpg',
     },
-    // Add more programs as needed
+    {
+      id: 'adult-group',
+      icon: <FaUserFriends />,
+      title: 'Adult Group',
+      description: 'Group boxing sessions for adults of all fitness levels.',
+      detailedDescription:
+        'The Adult Group program offers a balanced mix of boxing techniques and cardio workouts suitable for all fitness levels. Enhance your fitness, learn new skills, and meet like-minded individuals.',
+      features: ['Inclusive Training', 'Cardio and Strength', 'Community Building', 'Flexible Scheduling'],
+      category: 'Group',
+      image: '/programs/adult-group.jpg',
+    },
+    {
+      id: 'kickboxing',
+      icon: <FaDumbbell />,
+      title: 'Kickboxing',
+      description: 'High-intensity kickboxing classes for a full-body workout.',
+      detailedDescription:
+        'Our Kickboxing program combines traditional boxing techniques with powerful kicks to provide a comprehensive full-body workout. Improve your strength, agility, and endurance while learning self-defense skills.',
+      features: ['Full-Body Workout', 'Strength and Agility', 'Self-Defense Techniques', 'High-Intensity Training'],
+      category: 'Kickboxing',
+      image: '/programs/kickboxing.jpg',
+    },
   ];
 
-  const categories = ['All', 'Individual', 'Group']; // Updated Categories
+  const categories = ['All', 'Individual', 'Group', 'Kickboxing'];
 
   const filteredPrograms =
     selectedCategory === 'All'
@@ -620,15 +876,15 @@ const ProgramsSection = React.memo(() => {
   const closeProgramModal = useCallback(() => setProgramModal(null), []);
 
   return (
-    <section id="programs" className="py-20 bg-neutral-800" role="region" aria-labelledby="programs-heading">
+    <section id="programs" className="py-24 bg-neutral-900" role="region" aria-labelledby="programs-heading">
       <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
         {/* Section Header */}
         <AnimatedSection>
           <div className="text-center mb-12">
-            <h2 id="programs-heading" className="text-3xl font-bold text-gray-300">
+            <h2 id="programs-heading" className="text-3xl font-bold text-gray-200">
               Our Programs
             </h2>
-            <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
+            <p className="mt-4 text-gray-400">
               We offer a variety of programs to suit all skill levels and interests.
             </p>
           </div>
@@ -636,7 +892,6 @@ const ProgramsSection = React.memo(() => {
 
         {/* Categories Filter */}
         <AnimatedSection delay={0.2}>
-          {/* Modified flex container to prevent wrapping and adjust spacing */}
           <div
             className="flex justify-center mb-8 space-x-4 flex-wrap md:flex-nowrap"
             role="tablist"
@@ -648,9 +903,9 @@ const ProgramsSection = React.memo(() => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-md border ${
                   selectedCategory === category
-                    ? 'bg-primary text-white'
-                    : 'bg-transparent border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-200'
-                } focus:outline-none focus:ring-2 focus:ring-primary m-1 flex-1 min-w-[100px] md:min-w-0`}
+                    ? 'bg-secondary text-white border-secondary'
+                    : 'bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-white transition-colors duration-200'
+                } focus:outline-none focus:ring-2 focus:ring-secondary m-1 flex-1 min-w-[100px] md:min-w-0`}
                 aria-pressed={selectedCategory === category}
                 role="tab"
               >
@@ -715,12 +970,12 @@ const ContactSection = React.memo(() => {
   });
 
   return (
-    <section id="contact" className="py-20 bg-neutral-800" role="region" aria-labelledby="contact-heading">
+    <section id="contact" className="py-24 bg-neutral-900" role="region" aria-labelledby="contact-heading">
       <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
         {/* Section Header */}
         <AnimatedSection>
           <div className="text-center mb-12">
-            <h2 id="contact-heading" className="text-3xl font-bold text-gray-300">
+            <h2 id="contact-heading" className="text-3xl font-bold text-gray-200">
               Get in Touch
             </h2>
             <p className="mt-4 text-gray-400">
@@ -740,10 +995,10 @@ const ContactSection = React.memo(() => {
                 validationSchema={ContactSchema}
                 onSubmit={handleContactSubmit}
               >
-                {({ isValid, dirty, isSubmitting }) => (
-                  <Form className="bg-neutral-700 p-6 rounded-lg shadow-lg">
+                {({ errors, touched, isValid, dirty, isSubmitting }) => (
+                  <Form className="bg-neutral-700 p-6 rounded-lg shadow-lg border border-transparent hover:border-secondary transition-colors duration-200">
                     <div className="mb-4">
-                      <label htmlFor="name" className="block text-gray-300 font-medium mb-2">
+                      <label htmlFor="name" className="block text-gray-200 font-medium mb-2">
                         Name
                       </label>
                       <Field
@@ -751,13 +1006,15 @@ const ContactSection = React.memo(() => {
                         id="name"
                         name="name"
                         placeholder="Your Name"
-                        className="w-full px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-neutral-600 text-white"
+                        className={`w-full px-4 py-2 border ${
+                          errors.name && touched.name ? 'border-red-500' : 'border-gray-600'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-secondary bg-neutral-600 text-white transition-shadow duration-200 shadow-sm hover:shadow-md`}
                         aria-required="true"
                       />
                       <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="email" className="block text-gray-300 font-medium mb-2">
+                      <label htmlFor="email" className="block text-gray-200 font-medium mb-2">
                         Email
                       </label>
                       <Field
@@ -765,13 +1022,15 @@ const ContactSection = React.memo(() => {
                         id="email"
                         name="email"
                         placeholder="you@example.com"
-                        className="w-full px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-neutral-600 text-white"
+                        className={`w-full px-4 py-2 border ${
+                          errors.email && touched.email ? 'border-red-500' : 'border-gray-600'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-secondary bg-neutral-600 text-white transition-shadow duration-200 shadow-sm hover:shadow-md`}
                         aria-required="true"
                       />
                       <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="subject" className="block text-gray-300 font-medium mb-2">
+                      <label htmlFor="subject" className="block text-gray-200 font-medium mb-2">
                         Subject
                       </label>
                       <Field
@@ -779,13 +1038,15 @@ const ContactSection = React.memo(() => {
                         id="subject"
                         name="subject"
                         placeholder="Subject"
-                        className="w-full px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-neutral-600 text-white"
+                        className={`w-full px-4 py-2 border ${
+                          errors.subject && touched.subject ? 'border-red-500' : 'border-gray-600'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-secondary bg-neutral-600 text-white transition-shadow duration-200 shadow-sm hover:shadow-md`}
                         aria-required="true"
                       />
                       <ErrorMessage name="subject" component="div" className="text-red-500 text-sm mt-1" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="message" className="block text-gray-300 font-medium mb-2">
+                      <label htmlFor="message" className="block text-gray-200 font-medium mb-2">
                         Message
                       </label>
                       <Field
@@ -794,7 +1055,9 @@ const ContactSection = React.memo(() => {
                         name="message"
                         rows="5"
                         placeholder="Your message..."
-                        className="w-full px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-neutral-600 text-white"
+                        className={`w-full px-4 py-2 border ${
+                          errors.message && touched.message ? 'border-red-500' : 'border-gray-600'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-secondary bg-neutral-600 text-white transition-shadow duration-200 shadow-sm hover:shadow-md`}
                         aria-required="true"
                       />
                       <ErrorMessage name="message" component="div" className="text-red-500 text-sm mt-1" />
@@ -802,10 +1065,11 @@ const ContactSection = React.memo(() => {
                     <button
                       type="submit"
                       disabled={!(isValid && dirty) || isSubmitting}
-                      className={`w-full flex items-center justify-center px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
+                      className={`w-full flex items-center justify-center px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary ${
                         !(isValid && dirty) || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                       aria-disabled={!(isValid && dirty) || isSubmitting}
+                      aria-label="Send Message"
                     >
                       {isSubmitting ? (
                         <>
@@ -821,14 +1085,14 @@ const ContactSection = React.memo(() => {
             </div>
             {/* Contact Information and Map */}
             <div className="lg:w-1/2 mt-12 lg:mt-0">
-              <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold text-gray-300 mb-4">Contact Information</h3>
+              <div className="bg-neutral-700 p-6 rounded-lg shadow-lg border border-transparent hover:border-secondary transition-colors duration-200">
+                <h3 className="text-xl font-semibold text-gray-200 mb-4">Contact Information</h3>
                 <div className="flex items-start mb-4">
                   <FaPhone className="text-primary text-lg mr-3 mt-1" aria-hidden="true" />
                   <div>
                     <a
                       href="tel:+1234567890"
-                      className="text-gray-300 hover:text-primary transition-colors duration-200"
+                      className="text-gray-300 hover:text-secondary transition-colors duration-200"
                     >
                       +1 (234) 567-890
                     </a>
@@ -839,7 +1103,7 @@ const ContactSection = React.memo(() => {
                   <div>
                     <a
                       href="mailto:info@boxinggym.com"
-                      className="text-gray-300 hover:text-primary transition-colors duration-200"
+                      className="text-gray-300 hover:text-secondary transition-colors duration-200"
                     >
                       info@boxinggym.com
                     </a>
@@ -849,7 +1113,7 @@ const ContactSection = React.memo(() => {
                   <FaMapMarkerAlt className="text-primary text-lg mr-3 mt-1" aria-hidden="true" />
                   <div>
                     <span className="text-gray-300 block">110 S River Rd</span>
-                    <span className="text-gray-300 block">Des Plaines,  IL, 60016/suite 5</span>
+                    <span className="text-gray-300 block">Des Plaines, IL, 60016/suite 5</span>
                   </div>
                 </div>
                 {/* Social Media Links */}
@@ -859,7 +1123,7 @@ const ContactSection = React.memo(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
-                    className="text-gray-300 hover:text-primary transition-colors duration-200"
+                    className="text-gray-300 hover:text-secondary transition-colors duration-200"
                   >
                     <FaFacebookF />
                   </a>
@@ -868,7 +1132,7 @@ const ContactSection = React.memo(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Twitter"
-                    className="text-gray-300 hover:text-primary transition-colors duration-200"
+                    className="text-gray-300 hover:text-secondary transition-colors duration-200"
                   >
                     <FaTwitter />
                   </a>
@@ -877,7 +1141,7 @@ const ContactSection = React.memo(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
-                    className="text-gray-300 hover:text-primary transition-colors duration-200"
+                    className="text-gray-300 hover:text-secondary transition-colors duration-200"
                   >
                     <FaInstagram />
                   </a>
@@ -886,7 +1150,7 @@ const ContactSection = React.memo(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
-                    className="text-gray-300 hover:text-primary transition-colors duration-200"
+                    className="text-gray-300 hover:text-secondary transition-colors duration-200"
                   >
                     <FaLinkedinIn />
                   </a>
@@ -896,11 +1160,10 @@ const ContactSection = React.memo(() => {
               <div className="mt-8">
                 <iframe
                   title="Big Monkey Location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0192546035764!2d-122.41941508468176!3d37.77492977975925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c1e9d7e07%3A0x3b5b4b7e3c3a2b1c!2sBoxing%20Gym!5e0!3m2!1sen!2sus!4v1615469812134!5m2!1sen!2sus"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.902431635127!2d-88.08176308459347!3d42.02443517996181!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880fdc9c81b0c9d1%3A0x4bcbf7f1a1a1c1b8!2s110%20S%20River%20Rd%2C%20Des%20Plaines%2C%20IL%2060016!5e0!3m2!1sen!2sus!4v1615469812134!5m2!1sen!2sus"
                   width="100%"
                   height="300"
-                  frameBorder="0"
-                  style={{ border: 0 }}
+                  className="border-0"
                   allowFullScreen=""
                   aria-hidden="false"
                   tabIndex="0"
@@ -923,7 +1186,12 @@ const Footer = React.memo(() => (
       <div className="flex flex-col md:flex-row justify-between items-center">
         {/* Logo and Description */}
         <div className="flex items-center mb-6 md:mb-0">
-          <FaRunning className="text-primary text-3xl" aria-hidden="true" />
+          <img
+            src="/logo.png"
+            alt="Big Monkey Logo"
+            className="h-8 w-8" // Maintain consistency across all logos
+            loading="lazy"
+          />
           <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
         </div>
         {/* Social Media Links */}
@@ -933,7 +1201,7 @@ const Footer = React.memo(() => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
-            className="text-gray-300 hover:text-primary transition-colors duration-200"
+            className="text-gray-300 hover:text-secondary transition-colors duration-200"
           >
             <FaFacebookF />
           </a>
@@ -942,7 +1210,7 @@ const Footer = React.memo(() => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Twitter"
-            className="text-gray-300 hover:text-primary transition-colors duration-200"
+            className="text-gray-300 hover:text-secondary transition-colors duration-200"
           >
             <FaTwitter />
           </a>
@@ -951,7 +1219,7 @@ const Footer = React.memo(() => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="text-gray-300 hover:text-primary transition-colors duration-200"
+            className="text-gray-300 hover:text-secondary transition-colors duration-200"
           >
             <FaInstagram />
           </a>
@@ -960,7 +1228,7 @@ const Footer = React.memo(() => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
-            className="text-gray-300 hover:text-primary transition-colors duration-200"
+            className="text-gray-300 hover:text-secondary transition-colors duration-200"
           >
             <FaLinkedinIn />
           </a>
@@ -986,7 +1254,7 @@ const BackToTop = React.memo(() => {
   }, []);
 
   const scrollToTop = useCallback(() => {
-    scroll.scrollToTop({ duration: 500, smooth: 'easeInOutQuad' });
+    scroll.scrollToTop({ duration: 700, smooth: 'easeInOutQuad' });
   }, []);
 
   useEffect(() => {
@@ -999,14 +1267,14 @@ const BackToTop = React.memo(() => {
       {isVisible && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-transparent border border-primary text-primary p-3 rounded-full shadow-lg hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+          className="fixed bottom-8 right-8 bg-transparent text-secondary p-3 rounded-full border-2 border-secondary shadow-lg hover:bg-secondary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-200 flex items-center justify-center"
           aria-label="Back to Top"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <FaArrowUp aria-hidden="true" />
+          <FaArrowUp size={16} aria-hidden="true" />
         </motion.button>
       )}
     </AnimatePresence>
@@ -1034,7 +1302,10 @@ const BoxingLandingPage = () => {
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
         <title>Big Monkey - Unleash Your Potential</title>
-        <meta name="description" content="Join Big Monkey to transform your life through expert training and supportive community." />
+        <meta
+          name="description"
+          content="Join Big Monkey to transform your life through expert training and supportive community."
+        />
         <meta name="keywords" content="Boxing, Gym, Fitness, Training, Health" />
         {/* Open Graph Tags */}
         <meta property="og:title" content="Big Monkey - Unleash Your Potential" />
@@ -1042,6 +1313,9 @@ const BoxingLandingPage = () => {
         <meta property="og:image" content="/boxing-og-image.jpg" />
         <meta property="og:url" content="https://www.boxinggym.com" />
         <meta name="twitter:card" content="summary_large_image" />
+        {/* Additional SEO Tags */}
+        <link rel="canonical" href="https://www.boxinggym.com" />
+        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <div className="font-sans text-gray-300 bg-neutral-900 overflow-x-hidden">

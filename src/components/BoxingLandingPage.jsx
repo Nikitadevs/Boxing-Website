@@ -201,7 +201,7 @@ const Sidebar = React.memo(({ isOpen, closeSidebar, openModal }) => {
                 {/* Logo */}
                 <div className="flex items-center">
                   <FaRunning className="text-primary text-2xl" aria-hidden="true" />
-                  <span className="ml-2 font-bold text-xl text-gray-300">Boxing Gym</span>
+                  <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
                 </div>
                 {/* Close Button */}
                 <button
@@ -244,7 +244,7 @@ const Header = React.memo(({ openModal, toggleSidebar, isSidebarOpen }) => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <FaRunning className="text-primary text-3xl" aria-hidden="true" />
-            <span className="ml-2 font-bold text-xl text-gray-300">Boxing Gym</span>
+            <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
           </div>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8 items-center" aria-label="Primary Navigation">
@@ -324,7 +324,7 @@ const HeroSection = React.memo(({ openModal }) => (
       <source src="/boxing-hero.mp4" type="video/mp4" />
       <img
         src="/boxing-fallback.jpg" // Ensure this image is in your public directory
-        alt="Boxing Gym Hero Background"
+        alt="Big Monkey Hero Background"
         className="w-full h-full object-cover"
         loading="lazy"
       />
@@ -387,7 +387,7 @@ const AboutSection = React.memo(() => (
             About Us
           </h2>
           <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
-            At Boxing Gym, we believe in the power of boxing to transform lives. Our experienced trainers are
+            At Big Monkey, we believe in the power of boxing to transform lives. Our experienced trainers are
             dedicated to helping you achieve your fitness and personal goals in a supportive environment.
           </p>
         </div>
@@ -435,7 +435,7 @@ const AboutSection = React.memo(() => (
           <div className="md:w-1/2 relative group mb-8 md:mb-0">
             <img
               src="/about-boxing.jpg" // Ensure this image is in your public directory
-              alt="Boxing Gym Training Session"
+              alt="Big Monkey Training Session"
               className="rounded-lg shadow-lg w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
@@ -485,7 +485,7 @@ const AboutSection = React.memo(() => (
               <SwiperSlide>
                 <div className="bg-neutral-700 p-6 rounded-lg shadow-lg">
                   <p className="text-gray-300 mb-4">
-                    "Boxing Gym transformed my life! The trainers are amazing and the community is incredibly supportive."
+                    "Big Monkey transformed my life! The trainers are amazing and the community is incredibly supportive."
                   </p>
                   <h4 className="text-primary font-semibold">- Sarah L.</h4>
                 </div>
@@ -512,7 +512,7 @@ const AboutSection = React.memo(() => (
       </AnimatedSection>
     </section>
   )
-)
+);
 
 /**
  * Enhanced Program Card Component
@@ -585,26 +585,15 @@ const ProgramsSection = React.memo(() => {
 
   const programs = [
     {
-      id: 'beginner-boxing',
+      id: 'individual-class', // Updated ID
       icon: <FaRunning />,
-      title: 'Beginner Boxing',
-      description: 'Learn the fundamentals of boxing in a supportive environment.',
+      title: 'Individual Class', // Updated Title
+      description: 'Personalized boxing training tailored to your goals.',
       detailedDescription:
-        'Our Beginner Boxing program is designed for those new to boxing. You will learn the basic techniques, footwork, and defensive maneuvers to build a strong foundation.',
-      features: ['Basic Techniques', 'Footwork Training', 'Defensive Skills', 'Conditioning'],
-      category: 'Beginner',
-      image: '/programs/beginner-boxing.jpg', // Ensure this image is in your public directory
-    },
-    {
-      id: 'advanced-training',
-      icon: <FaDumbbell />,
-      title: 'Advanced Training',
-      description: 'Enhance your skills and performance with our advanced training.',
-      detailedDescription:
-        'The Advanced Training program is tailored for seasoned boxers looking to refine their techniques, improve their strength, and enhance overall performance.',
-      features: ['Advanced Techniques', 'Strength Conditioning', 'Sparring Sessions', 'Performance Analysis'],
-      category: 'Advanced',
-      image: '/programs/advanced-training.jpg', // Ensure this image is in your public directory
+        'Our Individual Class program offers one-on-one training sessions with experienced coaches. Focus on personalized techniques, strength conditioning, and strategic planning to achieve your specific fitness and boxing goals.',
+      features: ['Personalized Training', 'Technique Refinement', 'Strength Conditioning', 'Strategic Planning'],
+      category: 'Individual', // Updated Category
+      image: '/programs/individual-class.jpg', // Updated Image Path (ensure this image exists)
     },
     {
       id: 'group-classes',
@@ -615,12 +604,12 @@ const ProgramsSection = React.memo(() => {
         'Our Group Classes offer a fun and energetic environment where you can engage in boxing drills, cardio exercises, and team-based challenges to keep you motivated.',
       features: ['Cardio Boxing', 'Team Challenges', 'Motivational Coaching', 'Flexible Schedules'],
       category: 'Group',
-      image: '/programs/group-classes.jpg', // Ensure this image is in your public directory
+      image: '/programs/group-classes.jpg',
     },
     // Add more programs as needed
   ];
 
-  const categories = ['All', 'Beginner', 'Advanced', 'Group'];
+  const categories = ['All', 'Individual', 'Group']; // Updated Categories
 
   const filteredPrograms =
     selectedCategory === 'All'
@@ -859,8 +848,8 @@ const ContactSection = React.memo(() => {
                 <div className="flex items-start mb-4">
                   <FaMapMarkerAlt className="text-primary text-lg mr-3 mt-1" aria-hidden="true" />
                   <div>
-                    <span className="text-gray-300 block">1234 Boxing Ave, Suite 100,</span>
-                    <span className="text-gray-300 block">City, State, ZIP</span>
+                    <span className="text-gray-300 block">110 S River Rd</span>
+                    <span className="text-gray-300 block">Des Plaines,  IL, 60016/suite 5</span>
                   </div>
                 </div>
                 {/* Social Media Links */}
@@ -906,7 +895,7 @@ const ContactSection = React.memo(() => {
               {/* Google Map Embed */}
               <div className="mt-8">
                 <iframe
-                  title="Boxing Gym Location"
+                  title="Big Monkey Location"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0192546035764!2d-122.41941508468176!3d37.77492977975925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c1e9d7e07%3A0x3b5b4b7e3c3a2b1c!2sBoxing%20Gym!5e0!3m2!1sen!2sus!4v1615469812134!5m2!1sen!2sus"
                   width="100%"
                   height="300"
@@ -935,7 +924,7 @@ const Footer = React.memo(() => (
         {/* Logo and Description */}
         <div className="flex items-center mb-6 md:mb-0">
           <FaRunning className="text-primary text-3xl" aria-hidden="true" />
-          <span className="ml-2 font-bold text-xl text-gray-300">Boxing Gym</span>
+          <span className="ml-2 font-bold text-xl text-gray-300">Big Monkey</span>
         </div>
         {/* Social Media Links */}
         <div className="flex space-x-4">
@@ -979,7 +968,7 @@ const Footer = React.memo(() => (
       </div>
       {/* Bottom Footer */}
       <div className="mt-6 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} Boxing Gym. All rights reserved.
+        © {new Date().getFullYear()} Big Monkey. All rights reserved.
       </div>
     </div>
   </footer>
@@ -1044,12 +1033,12 @@ const BoxingLandingPage = () => {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
-        <title>Boxing Gym - Unleash Your Potential</title>
-        <meta name="description" content="Join Boxing Gym to transform your life through expert training and supportive community." />
+        <title>Big Monkey - Unleash Your Potential</title>
+        <meta name="description" content="Join Big Monkey to transform your life through expert training and supportive community." />
         <meta name="keywords" content="Boxing, Gym, Fitness, Training, Health" />
         {/* Open Graph Tags */}
-        <meta property="og:title" content="Boxing Gym - Unleash Your Potential" />
-        <meta property="og:description" content="Join Boxing Gym to transform your life through expert training and supportive community." />
+        <meta property="og:title" content="Big Monkey - Unleash Your Potential" />
+        <meta property="og:description" content="Join Big Monkey to transform your life through expert training and supportive community." />
         <meta property="og:image" content="/boxing-og-image.jpg" />
         <meta property="og:url" content="https://www.boxinggym.com" />
         <meta name="twitter:card" content="summary_large_image" />
